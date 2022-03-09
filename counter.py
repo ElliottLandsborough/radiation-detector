@@ -24,8 +24,8 @@ GPIO.setup(7, GPIO.IN)
 GPIO.add_event_detect(7, GPIO.FALLING, callback=countme)
 
 # Setup influx client
-influx_client = InfluxDBClient('192.168.2.55', 8086, database='radiation')
-influx_client.create_database('radiation')
+influx_client = InfluxDBClient('192.168.2.55', 8086, database='telegraf')
+influx_client.create_database('telegraf')
 
 loop_count = 0
 

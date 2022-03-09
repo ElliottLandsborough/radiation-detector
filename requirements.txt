@@ -1,1 +1,2 @@
 RPi.GPIO==0.7.1
+influxdb==5.3.1
