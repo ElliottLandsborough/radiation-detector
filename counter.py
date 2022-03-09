@@ -44,8 +44,8 @@ while True:
     # Every 10th iteration (10 seconds)
     if loop_count == 10:
 	# Output to shell
-        line1 = "uSv/h: {:.2f} ".format(len(counts)*usvh_ratio)
-        line2 = "CPM: {} ".format(int(len(counts)))
+        line1 = "uSv/h: {:.2f}".format(len(counts)*usvh_ratio)
+        line2 = "CPM: {}".format(int(len(counts)))
 
 	# Get highest CPM from Influx
         result = influx_client.query('SELECT max(cpm) as cpm, usvh FROM radiation')
@@ -53,9 +53,12 @@ while True:
             # This is bad... why is radiation increasing?
             #if 100000 > point['cpm']:
             if int(len(counts)) > point['cpm']:
-                print("Warning: highest level of radiation detected since records started. " + line1 + line2)
+                print("Warning: highest level of radiation detected since records started.")
             else:
-                print("We are currently safe..." + line1 + line2)
+                print("We are currently safe...")
+
+        print(line1)
+        print(line2)
 
         # Store a measurement in Influx
         measurements = [
