@@ -9,21 +9,14 @@ GPIO.setmode(GPIO.BOARD)
 millis = lambda: int(round(time.time() * 1000))
 
 counts = deque()
-hundredcount = 0
 usvh_ratio = 0.00812037037037 # This is for the J305 tube
 #usvh_ratio = 0.00277 # This is for the SBM20 tube
 
 # This method fires on edge detection (the pulse from the counter board)
 def countme(channel):
-    global counts, hundredcount
+    global counts
     timestamp = datetime.datetime.now()
     counts.append(timestamp)
-
-    # Every time we hit 100 counts, run count100 and reset
-    hundredcount = hundredcount + 1
-    if hundredcount >= 100:
-        hundredcount = 0
-        # why do this though?
 
 # Set the input with falling edge detection for geiger counter pulses
 GPIO.setup(7, GPIO.IN)
@@ -50,5 +43,11 @@ while True:
 
     text_count = f"{len(counts):0>3}"
     print(text_count)
+
+    # Update the displays
+    line1 = "uSv/h: {:.2f}   ".format(len(counts)*usvh_ratio)
+    line2 = "CPM: {}    ".format(int(len(counts)))
+    print(line1)
+    print(line2)
 
     time.sleep(1)
