@@ -3,6 +3,7 @@
 import time
 import datetime
 import RPi.GPIO as GPIO
+from influxdb import InfluxDBClient
 from collections import deque
 
 GPIO.setmode(GPIO.BOARD)
@@ -22,6 +23,10 @@ def countme(channel):
 GPIO.setup(7, GPIO.IN)
 GPIO.add_event_detect(7, GPIO.FALLING, callback=countme)
 
+# Setup influx client
+influx_client = InfluxDBClient('192.168.2.55', 8086, database='radiation')
+influx_client.create_database('radiation')
+
 loop_count = 0
 
 # In order to calculate CPM we need to store a rolling count of events in the last 60 seconds
@@ -37,6 +42,20 @@ while True:
         pass # there are no records in the queue.
 
     if loop_count == 10:
+        # Every 10th iteration (10 seconds), store a measurement in Influx
+        measurements = [
+            {
+                'measurement': 'radiation',
+                'fields': {
+                    'cpm': int(len(counts)),
+                    'usvh': "{:.2f}".format(len(counts)*usvh_ratio)
+                }
+            }
+        ]
+
+        influx_client.write_points(measurements)
+
+        # Output to shell
         line1 = "uSv/h: {:.2f}   ".format(len(counts)*usvh_ratio)
         line2 = "CPM: {}    ".format(int(len(counts)))
         print(line1)
