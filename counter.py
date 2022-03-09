@@ -41,8 +41,23 @@ while True:
     except IndexError:
         pass # there are no records in the queue.
 
+    # Every 10th iteration (10 seconds)
     if loop_count == 10:
-        # Every 10th iteration (10 seconds), store a measurement in Influx
+	# Output to shell
+        line1 = "uSv/h: {:.2f} ".format(len(counts)*usvh_ratio)
+        line2 = "CPM: {} ".format(int(len(counts)))
+
+	# Get highest CPM from Influx
+        result = influx_client.query('SELECT max(cpm) as cpm, usvh FROM radiation')
+        for point in result.get_points():
+            # This is bad... why is radiation increasing?
+            #if 100000 > point['cpm']:
+            if int(len(counts)) > point.cpm:
+                print("Warning: highest level of radiation detected since records started. " + line1 + line2)
+            else:
+                print("We are currently safe..." + line1 + line2)
+
+        # Store a measurement in Influx
         measurements = [
             {
                 'measurement': 'radiation',
@@ -55,11 +70,7 @@ while True:
 
         influx_client.write_points(measurements)
 
-        # Output to shell
-        line1 = "uSv/h: {:.2f}   ".format(len(counts)*usvh_ratio)
-        line2 = "CPM: {}    ".format(int(len(counts)))
-        print(line1)
-        print(line2)
+	# Reset loop
         loop_count = 0
 
     time.sleep(1)
