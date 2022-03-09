@@ -37,17 +37,10 @@ while True:
         pass # there are no records in the queue.
 
     if loop_count == 10:
-        print(int(len(counts)))
-        print("{:.2f}".format(len(counts)*usvh_ratio))
+        line1 = "uSv/h: {:.2f}   ".format(len(counts)*usvh_ratio)
+        line2 = "CPM: {}    ".format(int(len(counts)))
+        print(line1)
+        print(line2)
         loop_count = 0
-
-    text_count = f"{len(counts):0>3}"
-    print(text_count)
-
-    # Update the displays
-    line1 = "uSv/h: {:.2f}   ".format(len(counts)*usvh_ratio)
-    line2 = "CPM: {}    ".format(int(len(counts)))
-    print(line1)
-    print(line2)
 
     time.sleep(1)
