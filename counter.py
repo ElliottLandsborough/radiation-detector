@@ -52,7 +52,7 @@ while True:
         for point in result.get_points():
             # This is bad... why is radiation increasing?
             #if 100000 > point['cpm']:
-            if int(len(counts)) > point.cpm:
+            if int(len(counts)) > point['cpm']:
                 print("Warning: highest level of radiation detected since records started. " + line1 + line2)
             else:
                 print("We are currently safe..." + line1 + line2)
